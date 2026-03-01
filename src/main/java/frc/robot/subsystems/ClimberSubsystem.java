@@ -11,6 +11,8 @@ public class ClimberSubsystem extends SubsystemBase{
     private SparkMax climberLeftMotor;
 
     public ClimberSubsystem(){
+        SparkMaxConfig config = new SparkMaxConfig();
+        
         climberRightMotor = new SparkMax(18, MotorType.kBrushless);
         climberLeftMotor = new SparkMax(17, MotorType.kBrushless);
     }
