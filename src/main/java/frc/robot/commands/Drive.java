@@ -26,7 +26,7 @@ public class Drive extends Command {
     }
 
     public void execute(){
-        ChassisSpeeds speeds = new ChassisSpeeds(myTranslationXSupplier.getAsDouble()*0.2, myTranslationYSupplier.getAsDouble()*0.2, myOmegaSupplier.getAsDouble()*0.2);
+        ChassisSpeeds speeds = new ChassisSpeeds(myTranslationXSupplier.getAsDouble(), myTranslationYSupplier.getAsDouble(), myOmegaSupplier.getAsDouble());
         myDriveTrainSubsystem.Drive(speeds);
     }
 

@@ -15,8 +15,6 @@ public class BackIntakeSubsystem extends SubsystemBase{
         backIntakeMotorPush = new SparkMax(49, MotorType.kBrushless);
     }
 
-
-
     public void BackIntake(double speed){
         backIntakeMotorPush.set(speed);
 
