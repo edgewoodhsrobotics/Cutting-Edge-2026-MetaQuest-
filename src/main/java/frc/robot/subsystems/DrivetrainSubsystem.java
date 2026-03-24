@@ -87,12 +87,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         swerveDrive.driveFieldOriented(speed);
     }
 
-    private Pose2d getPose() {
+    public Pose2d getPose() {
         return swerveDrive.getPose();
     }
 
-    private Pose2d getQuestPose(){
+    public Pose2d getQuestPose(){
         return poseEstimator.getEstimatedPosition();
+    }
+
+    public void setQuestPose(){
     }
 
     //QuestNav
