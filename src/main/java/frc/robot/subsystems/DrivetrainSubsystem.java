@@ -13,20 +13,30 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import swervelib.parser.SwerveParser;
 import swervelib.SwerveDrive;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 
 public class DrivetrainSubsystem extends SubsystemBase {
     private SwerveDrive swerveDrive;
     private RobotConfig config;
 
+    //questnav
+    private SwerveDrivePoseEstimator poseEstimator;
+
     public DrivetrainSubsystem() throws IOException {
         double maximumSpeed = Units.feetToMeters(4.5);
         File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
         swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(maximumSpeed);
+
+        //Add values later for QUESTNAV
+        poseEstimator = new SwerveDrivePoseEstimator(null, null, null, getPose());
 
         RobotConfig config = null;
     try{
@@ -81,7 +91,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return swerveDrive.getPose();
     }
 
-    private void resetPose(Pose2d pose2d1) {
+    private Pose2d getQuestPose(){
+        return poseEstimator.getEstimatedPosition();
+    }
+
+    //QuestNav
+    public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3, N1> stdDevs) {
+        poseEstimator.addVisionMeasurement(pose, timestamp, stdDevs);
     }
 
 }
