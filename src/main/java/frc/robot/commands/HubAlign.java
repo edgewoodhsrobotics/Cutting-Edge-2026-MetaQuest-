@@ -16,7 +16,7 @@ public class HubAlign extends Command{
     }
 
     public void Initialize(){
-
+        
     }
 
     public void execute(){

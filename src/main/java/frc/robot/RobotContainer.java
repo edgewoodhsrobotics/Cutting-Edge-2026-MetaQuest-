@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.BackIntake;
 import frc.robot.commands.FrontIntake;
+import frc.robot.commands.HubAlign;
 import frc.robot.subsystems.BackIntakeSubsystem;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -31,6 +32,8 @@ import frc.robot.commands.BackIntakeWheel;
 import frc.robot.commands.Climber;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.commands.BackIntakeWheelRPM;
+import frc.robot.subsystems.HubAlignSubsystem;
+import frc.robot.subsystems.QuestNavSubsystem;
 
 
 public class RobotContainer {
@@ -41,6 +44,9 @@ public class RobotContainer {
   private final BackIntakeSubsystem myBackIntakeSubsystem;
   private final BackIntakeWheelSubsystem myBackIntakeWheelSubsystem;
   private final ClimberSubsystem myClimberSubsystem;
+  private final HubAlignSubsystem myHubAlignSubsystem;
+  private final QuestNavSubsystem myQuestNavSubsystem;
+
   private final SendableChooser<Command> chooser = new SendableChooser<>();
 
   
@@ -51,8 +57,14 @@ public class RobotContainer {
     myBackIntakeSubsystem = new BackIntakeSubsystem();
     myBackIntakeWheelSubsystem = new BackIntakeWheelSubsystem();
     myClimberSubsystem = new ClimberSubsystem();
+    myHubAlignSubsystem = new HubAlignSubsystem(myDriveTrainSubsystem);
+    myQuestNavSubsystem = new QuestNavSubsystem(myDriveTrainSubsystem);
+
+
     controllerDrive = new CommandXboxController(0);
     controllerShoot = new CommandXboxController(1);
+
+
     myDriveTrainSubsystem.setDefaultCommand(new Drive(myDriveTrainSubsystem, () -> -controllerDrive.getLeftY()*4, () -> -controllerDrive.getLeftX()*4, () -> -controllerDrive.getRightX()*2*Math.PI));
 
 
@@ -71,8 +83,6 @@ public class RobotContainer {
     chooser.addOption("Test", new PathPlannerAuto("Test"));
 
     SmartDashboard.putData("Auto Modes", chooser);
-    // SmartDashboard.putBoolean("Intake?", false);
-    // SmartDashboard.putBoolean("Shooter?", false);
 
     configureBindings();
   }
@@ -82,20 +92,14 @@ public class RobotContainer {
     controllerShoot.rightTrigger().whileTrue(new ParallelCommandGroup(new BackIntake(myBackIntakeSubsystem, -1), new FrontIntake(myFrontIntakeSubsystem, 0.5)));
     controllerShoot.rightBumper().whileTrue(new BackIntakeWheelRPM(myBackIntakeWheelSubsystem, -4000));
 
+    // //Climber Up
+    // controllerShoot.leftTrigger().whileTrue(new Climber(myClimberSubsystem, 0.5));
 
-    //Climber Up
-    controllerShoot.leftTrigger().whileTrue(new Climber(myClimberSubsystem, 0.5));
+    // //Climber Down
+    // controllerShoot.leftBumper().whileTrue(new Climber(myClimberSubsystem, -0.5));
 
-    //Climber Down
-    controllerShoot.leftBumper().whileTrue(new Climber(myClimberSubsystem, -0.5));
-
-
-  //Intake
-    //controllerShoot.y().whileTrue(new ParallelCommandGroup(new BackIntake(myBackIntakeSubsystem, 0.8), new BackIntakeWheel(myBackIntakeWheelSubsystem, 0), new FrontIntake(myFrontIntakeSubsystem, 0.8)));
-
-  //Continuous intake
-   controllerShoot.a().toggleOnTrue(new ParallelCommandGroup(new BackIntake(myBackIntakeSubsystem, 0.8), new BackIntakeWheel(myBackIntakeWheelSubsystem, 0), new FrontIntake(myFrontIntakeSubsystem, 0.8)));
-  //controllerShoot.a().toggleOnTrue(new InstantCommand(()-> SmartDashboard.putBoolean("Intake?", !SmartDashboard.getBoolean("Intake?", false))));
+    //Continuous intake
+    controllerShoot.a().toggleOnTrue(new ParallelCommandGroup(new BackIntake(myBackIntakeSubsystem, 0.8), new BackIntakeWheel(myBackIntakeWheelSubsystem, 0), new FrontIntake(myFrontIntakeSubsystem, 0.8)));
 
    //Continuous Shooter
     // controllerShoot.b().toggleOnTrue(new ParallelCommandGroup(
@@ -112,8 +116,10 @@ public class RobotContainer {
     controllerDrive.x().onTrue(new InstantCommand(myDriveTrainSubsystem::resetOdometry));
 
     //Unstick
-    controllerShoot.y().whileTrue(new ParallelCommandGroup(new BackIntake(myBackIntakeSubsystem, 1), new FrontIntake(myFrontIntakeSubsystem, -1), new BackIntakeWheelRPM(myBackIntakeWheelSubsystem, 4000)));
+     controllerShoot.y().whileTrue(new ParallelCommandGroup(new BackIntake(myBackIntakeSubsystem, 1), new FrontIntake(myFrontIntakeSubsystem, -1), new BackIntakeWheelRPM(myBackIntakeWheelSubsystem, 4000)));
     
+     //Align to hub
+      controllerDrive.leftBumper().onTrue(new HubAlign(myDriveTrainSubsystem, myHubAlignSubsystem));
 
   }
 
@@ -122,6 +128,13 @@ public class RobotContainer {
     return chooser.getSelected();
   }
 
+  public DrivetrainSubsystem getDriveTrain() {
+    return myDriveTrainSubsystem;
+  }
+
+  public QuestNavSubsystem getQuestNavSubsystem(){
+    return myQuestNavSubsystem;
+  }
 
 
 }

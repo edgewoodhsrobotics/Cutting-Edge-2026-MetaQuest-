@@ -35,7 +35,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
         swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(maximumSpeed);
 
-        //Add values later for QUESTNAV
+        //Add values later for QuestNav (not sure if I have to add values at all?)
         poseEstimator = new SwerveDrivePoseEstimator(null, null, null, getPose());
 
         RobotConfig config = null;
@@ -48,6 +48,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // Configure AutoBuilder last
     AutoBuilder.configure(
+            //QUESTION FOR LATER!! Should I use questpose method for this instead?
             swerveDrive::getPose, // Robot pose supplier
             swerveDrive::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
             swerveDrive::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
@@ -93,9 +94,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public Pose2d getQuestPose(){
         return poseEstimator.getEstimatedPosition();
-    }
-
-    public void setQuestPose(){
     }
 
     //QuestNav

@@ -6,6 +6,9 @@ package frc.robot;
 
 import java.io.IOException;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -63,7 +66,13 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
-  }
+
+    //Just for position two: figure out how to "select" different starting positions
+    Pose3d startingPosition = new Pose3d(new Pose2d(3.493, 4.019, new Rotation2d(0)));
+    m_robotContainer.getQuestNavSubsystem().setRobotPose(startingPosition);
+
+}
+
 
   /** This function is called periodically during autonomous. */
   @Override
