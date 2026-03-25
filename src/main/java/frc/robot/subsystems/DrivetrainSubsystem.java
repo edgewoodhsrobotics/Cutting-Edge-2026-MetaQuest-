@@ -17,7 +17,12 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -26,17 +31,29 @@ import edu.wpi.first.math.util.Units;
 public class DrivetrainSubsystem extends SubsystemBase {
     private SwerveDrive swerveDrive;
     private RobotConfig config;
-
-    //questnav
+    private SwerveDriveKinematics kinematics;
     private SwerveDrivePoseEstimator poseEstimator;
+   
+  
 
     public DrivetrainSubsystem() throws IOException {
         double maximumSpeed = Units.feetToMeters(4.5);
         File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
         swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(maximumSpeed);
+        kinematics = new SwerveDriveKinematics(
+          new Translation2d(0.1, .1),
+           new Translation2d(.1, .1),
+          new Translation2d(.1, .1),
+          new Translation2d(.1, .1) 
+
+        );
+    // new Translation2d(frontLeftX, frontLeftY),
+    // new Translation2d(frontRightX, frontRightY),
+    // new Translation2d(backLeftX, backLeftY),
+    // new Translation2d(backRightX, backRightY) 
 
         //Add values later for QuestNav (not sure if I have to add values at all?)
-        poseEstimator = new SwerveDrivePoseEstimator(null, null, null, getPose());
+        poseEstimator = new SwerveDrivePoseEstimator(kinematics, new Rotation2d(0), swerveDrive.getModulePositions(), swerveDrive.getPose());
 
         RobotConfig config = null;
     try{
