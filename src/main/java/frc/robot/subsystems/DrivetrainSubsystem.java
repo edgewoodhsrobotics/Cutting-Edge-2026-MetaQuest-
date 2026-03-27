@@ -11,6 +11,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import swervelib.parser.SwerveParser;
 import swervelib.SwerveDrive;
 import edu.wpi.first.math.Matrix;
@@ -41,10 +42,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(),"swerve");
         swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(maximumSpeed);
         kinematics = new SwerveDriveKinematics(
-          new Translation2d(0.1, .1),
-           new Translation2d(.1, .1),
-          new Translation2d(.1, .1),
-          new Translation2d(.1, .1) 
+          new Translation2d(0.374, 0.324),
+           new Translation2d(0.374, -0.324),
+          new Translation2d(-0.374, 0.324),
+          new Translation2d(-0.374, -0.324) 
 
         );
     // new Translation2d(frontLeftX, frontLeftY),
@@ -116,6 +117,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     //QuestNav
     public void addVisionMeasurement(Pose2d pose, double timestamp, Matrix<N3, N1> stdDevs) {
         poseEstimator.addVisionMeasurement(pose, timestamp, stdDevs);
+    }
+
+    public void periodic(){
+      Pose2d pose = getQuestPose();
+    SmartDashboard.putNumber("Quest X", pose.getX());
+    SmartDashboard.putNumber("Quest Y", pose.getY());
+    SmartDashboard.putNumber("Quest Heading", pose.getRotation().getDegrees());
     }
 
 }
